@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!--   See Using Zendesk Garden:
+    https://developer.zendesk.com/apps/docs/developer-guide/setup#using-zendesk-garden
+    https://garden.zendesk.com/css-components/bedrock/
+    https://garden.zendesk.com/css-components/utilities/typography/
+   -->
+   <link href="//cdn.jsdelivr.net/combine/npm/@zendeskgarden/css-bedrock,npm/@zendeskgarden/css-grid,npm/@zendeskgarden/css-buttons,npm/@zendeskgarden/css-forms,npm/@zendeskgarden/css-utilities" rel="stylesheet">
+   <script src="https://kit.fontawesome.com/711936c793.js" crossorigin="anonymous"></script>
+  </head>
+<body>
+  <h2 class="u-semibold u-fs-xl"></h2>
+  <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+  <script>
+    // Initialise Apps framework client. See also:
+    // https://developer.zendesk.com/apps/docs/developer-guide/getting_started
+    var client = ZAFClient.init();
+
+    //config variables
+    let copyFromInternalToExternal;
+    let copyFromExternalToInternal;
+    let notification;
+    
+
+    const insertComment = () => {
+      client.set('comment.text', document.getElementById('prevComment').innerHTML);
+    }
+
+    const clearComments = () => {
+      client.set('comment.text', '');
+    }
+ 
+
+    client.metadata().then(function(metadata) {
+      copyFromInternalToExternal = metadata.settings["PUBLIC_TO_INTERNAL"];
+      copyFromExternalToInternal = metadata.settings["INTERNAL_TO_PUBLIC"];
+      notification = metadata.settings["NOTIFICATION"]; 
+    });
+    
+
+    //function to set display text for internalNote and publicReply
+    const formatCommentType = (type) => {
+      //check comment type and craft message
+      if(type==='publicReply') {
+        return 'public reply';
+      } else if(type === 'internalNote') {
+        return 'internal note';
+      }
+    }
+
+   const copyToClipboard = (str) => {
+
+     //toogled or non-toggled?
+     function listener(e) {
+       e.clipboardData.setData("text/html", str);
+       e.clipboardData.setData("text/plain", str);
+       e.preventDefault();
+    }
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
+    client.invoke('notify', 'Copied', 'notice');
+  }
+
+  const handleCopy = (mode) => {
+    client.get('comment.text').then((data)=> {
+        //do not store prevComment in localstorage if text is empty
+        if(data["comment.text"] !== '<p></p>') {
+          document.getElementById('prevComment').innerHTML = data["comment.text"];
+          if(mode === 'button')
+            client.invoke('notify', 'Copied', 'notice');
+        }
+    });
+  }
+
+    client.on('comment.type.changed', ()=> {
+
+      client.get('comment.type').then((type)=>{
+
+        if(notification) {
+          //notify agent of comment type change
+          client.invoke('notify', '<b>You have switched to ' + formatCommentType(type["comment.type"]) + '</b>', 'alert');
+        }
+
+        if(!copyFromInternalToExternal && type["comment.type"] === 'publicReply') {
+          client.set('comment.text', '');
+        }
+
+        if(!copyFromExternalToInternal && type["comment.type"] === 'internalNote') {
+          client.set('comment.text', '');
+        }
+
+      });
+      handleCopy();
+      
+    });
+
+    client.on('app.registered', function() {
+      client.invoke('resize', { width: '100%', height: '150px' });
+    });
+  </script>
+
+  <div class="u-display-inline-block">  
+    <div class="u-float-left u-mr-xs" ><button onclick="insertComment()" class="c-btn c-btn--sm c-btn--primary"><i class="far fa-clipboard fa-md"></i> Insert</button></div>
+    <div class="u-float-left u-mr-xs"><button onclick="handleCopy('button');" class="c-btn c-btn--primary c-btn--sm"><i class="far fa-copy fa-md"></i> Copy</button></div>
+    <div class="u-float-left"><button onclick="clearComments()" class="c-btn c-btn--primary c-btn--sm"><i class="far fa-trash-alt fa-md"></i> Clear</button></div>
+  </div>
+    
+
+  
+  <div class="u-regular u-semibold" style="margin-top: 0.5rem;">Copied Comment: </div><br/>
+  <div id="prevComment" onclick="copyToClipboard(document.getElementById('prevComment').innerHTML);" class="u-border u-br u-bg-grey-200 u-bc-grey-300 u-p-xs" style="margin-top: -1rem; width: auto; overflow-wrap: break-word;"></div>
+  
+</body>
+</html>

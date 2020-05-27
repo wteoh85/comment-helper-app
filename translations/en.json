@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "Comment Helper",
+    "short_description": "Prevent accidental submission of internal note to customers",
+    "long_description": "1) Show notification on comment type change, 2) comments will not be copied over when toggle between public reply and internal note 3) Last comment before toggling the comment type will is saved in app for agent to insert into comment if necessary",
+    "installation_instructions": "Simply click install.",
+    "parameters": {
+      "PUBLIC_TO_INTERNAL": {
+        "label": "Copy comment from public reply to internal note?"
+      },
+      "INTERNAL_TO_PUBLIC": {
+        "label": "Copy comment internal note to public reply?"
+      },
+      "NOTIFICATION": {
+        "label": "Notify agent on comment type switch"
+      }
+
+    }
+  }
+}
