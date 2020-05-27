@@ -1,14 +1,15 @@
-# App name
+# comment-helper-app
 
-[brief description of the app]
+This is a Zendesk Support app to help agents manage comment better.
 
-### The following information is displayed:
+### Features:
 
-* info1
-* info2
-* info3
+* Enable or disable copying of comment when switch from public reply to internal note
+* Enable or disable copying of comment when switch from internal note to public reply
+* Previous comment is automatically copied on app 
 
-Please submit bug reports to [Insert Link](). Pull requests are welcome.
+
 
 ### Screenshot(s):
 [put your screenshots down here.]
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
