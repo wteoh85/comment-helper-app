@@ -12,4 +12,5 @@ This is a Zendesk Support app to help agents manage comment better.
 
 ### Screenshot(s):
 [put your screenshots down here.]
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![Image of alert](https://github.com/wteoh85/comment-helper-app/blob/master/screenshots/alert.png)
+
