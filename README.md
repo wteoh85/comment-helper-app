@@ -13,9 +13,6 @@ This is a Zendesk Support app to help agents manage comment better.
 
 ![Image of settings](https://github.com/wteoh85/comment-helper-app/blob/master/screenshots/alert.png)
 
-* Alert agent on comment type change
-![Image of alert](https://github.com/wteoh85/comment-helper-app/blob/master/screenshots/alert.png)
-
 * Insert copied comment
 * Copy existing comment
 * Clear comment
